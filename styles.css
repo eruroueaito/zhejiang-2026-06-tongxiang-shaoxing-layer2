@@ -76,6 +76,20 @@ button {
   cursor: pointer;
 }
 
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #cbd3db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #17202a;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .summary-band {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
