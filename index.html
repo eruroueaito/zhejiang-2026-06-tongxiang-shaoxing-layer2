@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>2026-06 桐乡 - 绍兴路线</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="layout">
+      <aside class="panel">
+        <h1>桐乡 - 绍兴 Layer 2</h1>
+        <p>D3107、汉庭绍兴鲁迅故里店、版本 A 古城路线。线条是行程连接，不是实时导航。</p>
+        <div class="toolbar">
+          <button id="fit-route" type="button">总览路线</button>
+        </div>
+        <div id="itinerary-list"></div>
+      </aside>
+      <div id="map" aria-label="桐乡到绍兴路线地图"></div>
+    </main>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="./src/trip-data.js"></script>
+    <script src="./src/route-utils.js"></script>
+    <script src="./src/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,229 @@
+{
+  "title": "2026-06 Tongxiang to Shaoxing Layer 2 Route",
+  "must_see_poi_ids": ["luxun_native_place"],
+  "pois": [
+    {
+      "id": "tongxiang_hanting",
+      "name": "Hanting Hotel Tongxiang Xiaochang East Road",
+      "name_zh": "汉庭酒店(桐乡校场东路店)",
+      "coordinates": { "lng": 120.582786, "lat": 30.620247 },
+      "type": "hotel",
+      "recommendation": "strong",
+      "note": "2026-06-08 Tongxiang lodging base."
+    },
+    {
+      "id": "tongxiang_station",
+      "name": "Tongxiang Railway Station",
+      "name_zh": "桐乡站",
+      "coordinates": { "lng": 120.567363, "lat": 30.537324 },
+      "type": "station",
+      "recommendation": "strong"
+    },
+    {
+      "id": "shaoxing_north",
+      "name": "Shaoxing North Railway Station",
+      "name_zh": "绍兴北站",
+      "coordinates": { "lng": 120.539485, "lat": 30.098661 },
+      "type": "station",
+      "recommendation": "strong"
+    },
+    {
+      "id": "shaoxing_hanting_luxun",
+      "name": "Hanting Hotel Shaoxing Lu Xun Native Place",
+      "name_zh": "汉庭酒店(绍兴鲁迅故里店)",
+      "coordinates": { "lng": 120.586176, "lat": 29.996166 },
+      "type": "hotel",
+      "recommendation": "strong",
+      "note": "Selected Shaoxing base, Renmin Middle Road 216."
+    },
+    {
+      "id": "luxun_native_place",
+      "name": "Lu Xun Native Place",
+      "name_zh": "鲁迅故里",
+      "coordinates": { "lng": 120.584419, "lat": 29.993263 },
+      "type": "must-see",
+      "recommendation": "must",
+      "opening": "Tue-Sun 08:30-21:00; refresh reservation cutoff before travel."
+    },
+    {
+      "id": "shen_garden",
+      "name": "Shen Garden",
+      "name_zh": "沈园",
+      "coordinates": { "lng": 120.590035, "lat": 29.990303 },
+      "type": "garden",
+      "recommendation": "strong",
+      "opening": "08:00-21:00; refresh before travel."
+    },
+    {
+      "id": "cangqiao_street",
+      "name": "Cangqiao Straight Street",
+      "name_zh": "仓桥直街",
+      "coordinates": { "lng": 120.577947, "lat": 29.997525 },
+      "type": "old-street",
+      "recommendation": "strong",
+      "note": "Dinner and night walk segment."
+    },
+    {
+      "id": "shusheng_guli",
+      "name": "Shusheng Guli",
+      "name_zh": "书圣故里",
+      "coordinates": { "lng": 120.58574, "lat": 30.008014 },
+      "type": "historic-district",
+      "recommendation": "strong"
+    },
+    {
+      "id": "bazhiqiao",
+      "name": "Bazhiqiao",
+      "name_zh": "八字桥",
+      "coordinates": { "lng": 120.591561, "lat": 29.999705 },
+      "type": "historic-bridge",
+      "recommendation": "strong"
+    }
+  ],
+  "days": [
+    {
+      "id": "2026-06-09",
+      "date": "2026-06-09",
+      "title": "Tongxiang to Shaoxing, Lu Xun core route",
+      "pois": [
+        "tongxiang_hanting",
+        "tongxiang_station",
+        "shaoxing_north",
+        "shaoxing_hanting_luxun",
+        "luxun_native_place",
+        "shen_garden",
+        "cangqiao_street",
+        "shaoxing_hanting_luxun"
+      ],
+      "schedule": [
+        { "time": "10:00", "text": "Leave Tongxiang Hanting for Tongxiang Station." },
+        { "time": "10:57-11:45", "text": "D3107 Tongxiang -> Shaoxing North." },
+        { "time": "12:10", "text": "Arrive at Hanting Shaoxing Lu Xun Native Place; leave luggage or check in." },
+        { "time": "13:30-16:20", "text": "Lu Xun Native Place." },
+        { "time": "16:40-18:00", "text": "Shen Garden." },
+        { "time": "18:20-20:00", "text": "Cangqiao Straight Street dinner and old-street walk." }
+      ],
+      "segments": [
+        {
+          "from": "tongxiang_hanting",
+          "to": "tongxiang_station",
+          "driving": { "distance_m": 11301, "duration_min": 19 },
+          "transit": { "note": "Taxi with luggage." },
+          "recommended": { "mode": "taxi", "minutes": 20, "label": "打车 20 分钟", "geometry": "driving" }
+        },
+        {
+          "from": "tongxiang_station",
+          "to": "shaoxing_north",
+          "transit": { "route": "D3107", "duration_min": 48, "fare_cny": 35, "note": "10:57 -> 11:45, second class currently available." },
+          "recommended": { "mode": "rail", "minutes": 48, "label": "D3107 48 分钟", "geometry": "rail" }
+        },
+        {
+          "from": "shaoxing_north",
+          "to": "shaoxing_hanting_luxun",
+          "driving": { "distance_m": 15583, "duration_min": 23 },
+          "transit": { "note": "Taxi is recommended with luggage." },
+          "recommended": { "mode": "taxi", "minutes": 25, "label": "打车 25 分钟", "geometry": "driving" }
+        },
+        {
+          "from": "shaoxing_hanting_luxun",
+          "to": "luxun_native_place",
+          "walking": { "distance_m": 962, "duration_min": 20 },
+          "recommended": { "mode": "walk", "minutes": 20, "label": "步行 20 分钟", "geometry": "walking" }
+        },
+        {
+          "from": "luxun_native_place",
+          "to": "shen_garden",
+          "walking": { "distance_m": 840, "duration_min": 20 },
+          "recommended": { "mode": "walk", "minutes": 20, "label": "步行 20 分钟", "geometry": "walking" }
+        },
+        {
+          "from": "shen_garden",
+          "to": "cangqiao_street",
+          "walking": { "distance_m": 1831, "duration_min": 35 },
+          "transit": { "note": "Walking is possible but long; taxi or shared bike is the practical choice." },
+          "recommended": { "mode": "taxi", "minutes": 12, "label": "打车/骑行 12 分钟", "geometry": "driving" }
+        },
+        {
+          "from": "cangqiao_street",
+          "to": "shaoxing_hanting_luxun",
+          "walking": { "distance_m": 1100, "duration_min": 18 },
+          "transit": { "note": "Estimated local walk; taxi if tired after dinner." },
+          "recommended": { "mode": "walk", "minutes": 18, "label": "步行 18 分钟", "geometry": "walking" }
+        }
+      ]
+    },
+    {
+      "id": "2026-06-10",
+      "date": "2026-06-10",
+      "title": "Old city morning and return to Taizhou",
+      "pois": [
+        "shaoxing_hanting_luxun",
+        "shusheng_guli",
+        "bazhiqiao",
+        "shaoxing_hanting_luxun",
+        "shaoxing_north"
+      ],
+      "schedule": [
+        { "time": "08:45", "text": "Check out and leave luggage at the hotel." },
+        { "time": "09:10-10:40", "text": "Shusheng Guli." },
+        { "time": "10:50-11:30", "text": "Bazhiqiao." },
+        { "time": "11:45-13:20", "text": "Lunch and rest near the hotel." },
+        { "time": "15:10", "text": "Taxi to Shaoxing North Station." },
+        { "time": "16:27-21:06", "text": "D3296 + D3126 via Hangzhou East to Taizhou." }
+      ],
+      "segments": [
+        {
+          "from": "shaoxing_hanting_luxun",
+          "to": "shusheng_guli",
+          "walking": { "distance_m": 1600, "duration_min": 25 },
+          "recommended": { "mode": "walk", "minutes": 25, "label": "步行 25 分钟", "geometry": "walking" }
+        },
+        {
+          "from": "shusheng_guli",
+          "to": "bazhiqiao",
+          "walking": { "distance_m": 1519, "duration_min": 26 },
+          "recommended": { "mode": "walk", "minutes": 26, "label": "步行 26 分钟", "geometry": "walking" }
+        },
+        {
+          "from": "bazhiqiao",
+          "to": "shaoxing_hanting_luxun",
+          "walking": { "distance_m": 1400, "duration_min": 22 },
+          "transit": { "note": "Estimated local walk; taxi if weather is bad." },
+          "recommended": { "mode": "walk", "minutes": 22, "label": "步行 22 分钟", "geometry": "walking" }
+        },
+        {
+          "from": "shaoxing_hanting_luxun",
+          "to": "shaoxing_north",
+          "driving": { "distance_m": 16879, "duration_min": 25 },
+          "transit": { "note": "Taxi with luggage; arrive at station around 15:40 for the 16:27 train." },
+          "recommended": { "mode": "taxi", "minutes": 25, "label": "打车 25 分钟", "geometry": "driving" }
+        }
+      ]
+    }
+  ],
+  "rail": [
+    {
+      "date": "2026-06-09",
+      "train": "D3107",
+      "from": "Tongxiang",
+      "to": "Shaoxing North",
+      "depart": "10:57",
+      "arrive": "11:45",
+      "duration_min": 48,
+      "second_class_cny": 35,
+      "query_date": "2026-06-02"
+    },
+    {
+      "date": "2026-06-10",
+      "train": "D3296 + D3126",
+      "from": "Shaoxing North",
+      "to": "Taizhou",
+      "depart": "16:27",
+      "arrive": "21:06",
+      "duration_min": 279,
+      "second_class_cny": 200,
+      "transfer": "Hangzhou East, same station, 42 min",
+      "query_date": "2026-06-02"
+    }
+  ]
+}

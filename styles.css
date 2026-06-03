@@ -1,0 +1,164 @@
+/**
+ * 模块名称：Layer 2 map styles
+ * 职责描述：定义浙江桐乡-绍兴地图页面的桌面与移动端布局、路线标签和日程卡片样式。
+ * 输入/输出：输入 HTML 结构与 Leaflet 元素类名；输出稳定、可扫描的地图和行程面板视觉样式。
+ * 依赖关系：依赖 Leaflet 默认样式和本页面 HTML 结构。
+ * 注意事项：移动端底部面板保留地图可视空间，避免日程文本遮挡路线主体。
+ */
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+  background: #f7f7f4;
+  color: #1f2933;
+}
+
+body {
+  margin: 0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  height: 100vh;
+}
+
+.panel {
+  overflow: auto;
+  padding: 24px;
+  background: #fbfbf8;
+  border-right: 1px solid #ddd8cc;
+}
+
+.panel h1 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.panel p {
+  margin: 0 0 16px;
+  color: #5b6470;
+  line-height: 1.6;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.toolbar button,
+.day-card button {
+  border: 1px solid #ccd2d9;
+  background: #ffffff;
+  border-radius: 6px;
+  color: #1f2933;
+  cursor: pointer;
+}
+
+.toolbar button {
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+.day-card {
+  border-top: 1px solid #e1ded5;
+  padding: 16px 0;
+}
+
+.day-card h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+
+.day-card ol {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.day-card li {
+  margin-bottom: 10px;
+}
+
+.day-card button {
+  display: block;
+  min-height: 32px;
+  padding: 4px 8px;
+  margin-bottom: 3px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.day-card span {
+  color: #5b6470;
+  font-size: 13px;
+}
+
+#map {
+  min-height: 100vh;
+}
+
+.route-label {
+  width: auto !important;
+  height: auto !important;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(31, 41, 51, 0.2);
+  color: #1f2933;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(31, 41, 51, 0.15);
+}
+
+.direction-arrow {
+  width: 24px !important;
+  height: 24px !important;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(31, 41, 51, 0.16);
+  box-shadow: 0 1px 4px rgba(31, 41, 51, 0.14);
+}
+
+.direction-arrow-inner {
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 12px solid #1f2933;
+  transform-origin: 50% 58%;
+}
+
+@media (max-width: 780px) {
+  .layout {
+    display: block;
+    height: 100dvh;
+  }
+
+  #map {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  .panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 500;
+    max-height: 46dvh;
+    padding: 16px;
+    border-right: 0;
+    border-top: 1px solid #ddd8cc;
+    overflow: auto;
+    box-shadow: 0 -6px 18px rgba(31, 41, 51, 0.18);
+  }
+
+  .panel h1 {
+    font-size: 18px;
+  }
+}
