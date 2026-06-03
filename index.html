@@ -3,25 +3,30 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>2026-06 桐乡 - 绍兴路线</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <title>2026-06 泰州 - 桐乡 - 绍兴行程</title>
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
     <main class="layout">
-      <aside class="panel">
-        <h1>桐乡 - 绍兴 Layer 2</h1>
-        <p>D3107、汉庭绍兴鲁迅故里店、版本 A 古城路线。线条是行程连接，不是实时导航。</p>
-        <div class="toolbar">
-          <button id="fit-route" type="button">总览路线</button>
+      <aside class="panel" aria-label="三天行程明细">
+        <div class="panel-header">
+          <h1 id="trip-title">2026-06 泰州 - 桐乡 - 绍兴</h1>
+          <p id="trip-subtitle"></p>
+          <div class="toolbar">
+            <button id="fit-route" type="button">总览路线</button>
+          </div>
         </div>
-        <div id="itinerary-list"></div>
+        <section class="summary-band" aria-label="行程摘要">
+          <div id="summary-list" class="summary-list"></div>
+        </section>
+        <div id="itinerary-list" class="itinerary-list"></div>
       </aside>
-      <div id="map" aria-label="桐乡到绍兴路线地图"></div>
+      <section id="map" aria-label="泰州到桐乡、绍兴再返回泰州的高德地图路线"></section>
     </main>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://webapi.amap.com/loader.js"></script>
     <script src="./src/trip-data.js"></script>
     <script src="./src/route-utils.js"></script>
+    <script src="./src/amap-config.js"></script>
     <script src="./src/app.js"></script>
   </body>
 </html>

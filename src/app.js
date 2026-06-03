@@ -1,88 +1,226 @@
 /**
- * 模块名称：Layer 2 map app
- * 职责描述：渲染桐乡-绍兴 Layer 2 路线地图、日程卡片和相邻交通标签。
- * 输入/输出：读取 `window.TRIP_DATA`；输出浏览器页面中的地图标记、连接线和行程列表。
- * 依赖关系：依赖 Leaflet、`src/trip-data.js` 和 `src/route-utils.js`。
- * 注意事项：地图线条为行程连接线；购票、开放时间、预约状态仍需出行前刷新。
+ * 模块名称：Zhejiang Amap itinerary app
+ * 职责描述：渲染三天行程侧栏、高德地图 POI 标记、带原生方向箭头的行程连接线和路线标签。
+ * 输入/输出：读取 `window.TRIP_DATA`、`window.RouteUtils` 和 `window.AMAP_CONFIG`；输出交互式高德地图页面。
+ * 依赖关系：依赖高德 JSAPI v2.0 Loader、Amap Polyline/Marker/InfoWindow、前端行程数据和路线工具。
+ * 注意事项：高德 `showDir` 负责箭头样式；线条是行程连接线，不替代购票、预约或实时导航。
  */
-const data = window.TRIP_DATA;
-const map = L.map("map", { zoomControl: true }).setView([30.1, 120.56], 11);
+(async function initZhejiangAmapItinerary() {
+  const data = window.TRIP_DATA;
+  const utils = window.RouteUtils;
+  const config = window.AMAP_CONFIG;
+  const routeSegments = utils.createRouteSegments(data);
+  const markerByPoiId = new Map();
+  const routeOverlays = [];
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 18,
-  attribution: "&copy; OpenStreetMap contributors"
-}).addTo(map);
+  window.__AMAP_ROUTE_STATUS = {
+    planned: routeSegments.length,
+    completed: 0,
+    failed: 0,
+    directional: 0,
+  };
 
-const dayLayerGroups = new Map();
-const list = document.querySelector("#itinerary-list");
-
-for (const day of data.days) {
-  const group = L.layerGroup().addTo(map);
-  dayLayerGroups.set(day.id, group);
-
-  const section = document.createElement("section");
-  section.className = "day-card";
-  section.innerHTML = `<h2>${day.title}</h2>`;
-
-  for (const stop of day.stops) {
-    const marker = L.circleMarker(window.RouteUtils.toLatLng(stop), {
-      radius: 7,
-      color: day.color,
-      fillColor: day.color,
-      fillOpacity: 0.86,
-      weight: 2
-    }).bindPopup(`<strong>${stop[1]}</strong><br>${stop[4]}`);
-    marker.addTo(group);
+  function syncRouteStatus() {
+    document.documentElement.dataset.amapRouteStatus = JSON.stringify(window.__AMAP_ROUTE_STATUS);
   }
 
-  for (const segment of window.RouteUtils.segments(day)) {
-    const line = L.polyline([window.RouteUtils.toLatLng(segment.from), window.RouteUtils.toLatLng(segment.to)], {
-      color: day.color,
-      weight: 4,
-      opacity: 0.72,
-      dashArray: segment.label.includes("D3107") ? "8 8" : ""
-    }).addTo(group);
-    L.marker(window.RouteUtils.pointBetween(segment.from, segment.to, 0.62), {
-      icon: L.divIcon({
-        className: "route-label",
-        html: segment.label,
-        iconSize: [120, 24],
-        iconAnchor: [60, 12]
-      }),
-      interactive: false
-    }).addTo(group);
-    L.marker(window.RouteUtils.pointBetween(segment.from, segment.to, 0.42), {
-      icon: L.divIcon({
-        className: "direction-arrow",
-        html: `<span class="direction-arrow-inner" style="transform: rotate(${segment.bearingDeg.toFixed(1)}deg)"></span>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-      }),
-      interactive: false
-    }).addTo(group);
-    line.bindTooltip(segment.label);
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 
-  const orderedStops = document.createElement("ol");
-  day.stops.forEach((stop, index) => {
-    const item = document.createElement("li");
-    item.innerHTML = `<button type="button" data-day="${day.id}" data-index="${index}">${stop[1]}</button><span>${stop[4]}</span>`;
-    orderedStops.appendChild(item);
-  });
-  section.appendChild(orderedStops);
-  list.appendChild(section);
-}
+  function segmentForDay(day, index) {
+    return day.segments[index] || null;
+  }
 
-list.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-day]");
-  if (!button) return;
-  const day = data.days.find((item) => item.id === button.dataset.day);
-  const stop = day.stops[Number(button.dataset.index)];
-  map.setView(window.RouteUtils.toLatLng(stop), 15);
-});
+  function renderSummary() {
+    document.getElementById("trip-title").textContent = data.title;
+    document.getElementById("trip-subtitle").textContent = data.subtitle;
+    const totalRailFare = data.rail.reduce((sum, item) => sum + item.second_class_cny, 0);
+    document.getElementById("summary-list").innerHTML = [
+      ["行程", "6/8 泰州出发，6/10 回到泰州"],
+      ["主线", "泰州 -> 张家港 -> 桐乡 -> 绍兴 -> 杭州东 -> 泰州"],
+      ["车票", `二等座合计约 ${totalRailFare} 元，均为 2026-06-03 刷新`],
+      ["版本", data.version],
+    ].map(([label, value]) => `
+      <article class="summary-item">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(value)}</strong>
+      </article>
+    `).join("");
+  }
 
-document.querySelector("#fit-route").addEventListener("click", () => {
-  map.fitBounds(window.RouteUtils.bounds(data.days), { padding: [24, 24] });
-});
+  function segmentDetail(segment) {
+    if (!segment) return "当天最后一站";
+    const parts = [segment.recommended?.label || segment.transit?.route || "交通待确认"];
+    if (segment.train) parts.push(segment.train);
+    if (segment.transit?.fare_cny) parts.push(`二等座 ${segment.transit.fare_cny} 元`);
+    if (segment.driving?.distance_m) parts.push(`${(segment.driving.distance_m / 1000).toFixed(1)} km`);
+    if (segment.walking?.distance_m) parts.push(`${Math.round(segment.walking.distance_m)} m`);
+    if (segment.transit?.note) parts.push(segment.transit.note);
+    return parts.join(" · ");
+  }
 
-map.fitBounds(window.RouteUtils.bounds(data.days), { padding: [24, 24] });
+  function renderItinerary() {
+    const list = document.getElementById("itinerary-list");
+    list.innerHTML = data.days.map((day) => `
+      <article class="day-card" style="--day-color:${day.color}">
+        <header class="day-header">
+          <span>${escapeHtml(day.date)}</span>
+          <h2>${escapeHtml(day.title)}</h2>
+          <p>${escapeHtml(day.summary)}</p>
+          <div class="day-base">${escapeHtml(day.base)}</div>
+        </header>
+        <ol class="timeline">
+          ${day.schedule.map((item) => `
+            <li>
+              <time>${escapeHtml(item.time)}</time>
+              <div>
+                <strong>${escapeHtml(item.title)}</strong>
+                <p>${escapeHtml(item.text)}</p>
+              </div>
+            </li>
+          `).join("")}
+        </ol>
+        <div class="stop-list">
+          ${day.pois.map((poiId, index) => {
+            const poi = utils.getPoiById(data, poiId);
+            const nextSegment = segmentForDay(day, index);
+            return `
+              <button class="stop-button" type="button" data-day="${day.id}" data-index="${index}">
+                <span>${index + 1}</span>
+                <strong>${escapeHtml(poi.name_zh)}</strong>
+                <small>${escapeHtml(poi.note || poi.opening || "")}</small>
+                <em>${escapeHtml(segmentDetail(nextSegment))}</em>
+              </button>
+            `;
+          }).join("")}
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function popupHtml(poi) {
+    return `
+      <div class="popup-title">${escapeHtml(poi.name_zh)}</div>
+      <div class="popup-meta">${escapeHtml(poi.type)}<br>${escapeHtml(poi.note || poi.opening || "")}</div>
+    `;
+  }
+
+  function routeStroke(segment) {
+    if (segment.geometry === "rail") return { weight: 7, opacity: 0.82, style: "dashed", dash: [12, 8] };
+    if (segment.geometry === "walking") return { weight: 5, opacity: 0.78, style: "solid", dash: [0, 0] };
+    return { weight: 6, opacity: 0.86, style: "solid", dash: [0, 0] };
+  }
+
+  function routeLabelHtml(segment) {
+    const train = segment.train ? `<b>${escapeHtml(segment.train)}</b>` : "";
+    return `<div class="route-label" style="border-color:${segment.color}">${train}<span>${segment.order}. ${escapeHtml(segment.label)}</span></div>`;
+  }
+
+  function setMapError(message) {
+    document.getElementById("map").innerHTML = `<div class="map-error">${escapeHtml(message)}</div>`;
+    window.__AMAP_ROUTE_STATUS.failed = window.__AMAP_ROUTE_STATUS.planned;
+    syncRouteStatus();
+  }
+
+  syncRouteStatus();
+  renderSummary();
+  renderItinerary();
+
+  window._AMapSecurityConfig = {
+    securityJsCode: config.securityJsCode,
+  };
+
+  try {
+    const AMap = await AMapLoader.load({
+      key: config.jsApiKey,
+      version: "2.0",
+      plugins: ["AMap.Scale", "AMap.ToolBar"],
+    });
+
+    const mapBounds = utils.bounds(data);
+    const map = new AMap.Map("map", {
+      viewMode: "2D",
+      zoom: 7,
+      center: mapBounds.center,
+      mapStyle: "amap://styles/normal",
+    });
+    map.addControl(new AMap.Scale());
+    map.addControl(new AMap.ToolBar({ position: "RT" }));
+
+    const infoWindow = new AMap.InfoWindow({ offset: new AMap.Pixel(0, -30) });
+
+    for (const poi of data.pois) {
+      const marker = new AMap.Marker({
+        position: utils.coordinatesOf(poi),
+        title: poi.name_zh,
+        anchor: "bottom-center",
+        zIndex: poi.recommendation === "must" ? 110 : 90,
+      });
+      marker.on("click", () => {
+        infoWindow.setContent(popupHtml(poi));
+        infoWindow.open(map, marker.getPosition());
+      });
+      markerByPoiId.set(poi.id, marker);
+      map.add(marker);
+    }
+
+    for (const segment of routeSegments) {
+      const stroke = routeStroke(segment);
+      const line = new AMap.Polyline({
+        path: segment.path,
+        strokeColor: segment.color,
+        strokeWeight: stroke.weight,
+        strokeOpacity: stroke.opacity,
+        strokeStyle: stroke.style,
+        strokeDasharray: stroke.dash,
+        lineJoin: "round",
+        lineCap: "round",
+        showDir: true,
+        zIndex: segment.geometry === "rail" ? 70 : 80,
+      });
+      const label = new AMap.Marker({
+        position: utils.midpoint(segment.path, segment.geometry === "rail" ? 0.52 : 0.58),
+        content: routeLabelHtml(segment),
+        anchor: "center",
+        zIndex: 120,
+      });
+      routeOverlays.push(line, label);
+      map.add([line, label]);
+      window.__AMAP_ROUTE_STATUS.completed += 1;
+      window.__AMAP_ROUTE_STATUS.directional += 1;
+      syncRouteStatus();
+    }
+
+    function fitRoute() {
+      map.setFitView(
+        [...markerByPoiId.values(), ...routeOverlays],
+        false,
+        [40, 40, 40, 40]
+      );
+    }
+
+    document.getElementById("fit-route").addEventListener("click", fitRoute);
+    document.getElementById("itinerary-list").addEventListener("click", (event) => {
+      const button = event.target.closest(".stop-button");
+      if (!button) return;
+      const day = data.days.find((item) => item.id === button.dataset.day);
+      const poi = utils.getPoiById(data, day.pois[Number(button.dataset.index)]);
+      const position = utils.coordinatesOf(poi);
+      map.setZoomAndCenter(13, position);
+      const marker = markerByPoiId.get(poi.id);
+      infoWindow.setContent(popupHtml(poi));
+      infoWindow.open(map, marker?.getPosition?.() || position);
+    });
+
+    fitRoute();
+  } catch (error) {
+    console.error(error);
+    setMapError("高德地图加载失败，请检查网络或 JSAPI Key。");
+  }
+})();
